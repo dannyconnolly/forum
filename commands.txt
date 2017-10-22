@@ -27,5 +27,6 @@ phpunit --filter a_thread_has_a_creator
 php artisan make:test ParticipateInForum
 
 phpunit --filter ThreadTest
+phpunit --filter CreateThreadsTest
 
 php artisan make:test CreateThreadsTest
