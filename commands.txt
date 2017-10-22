@@ -15,3 +15,5 @@ php artisan tinker
 	$threads->each(function ($thread) { factory('App\Reply', 10)->create(['thread_id' => $thread->id]); });
 	
 phpunit
+
+php artisan make:test ReplyTest --unit
