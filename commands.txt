@@ -25,3 +25,7 @@ php artisan make:test ThreadTest --unit
 phpunit --filter a_thread_has_a_creator
 
 php artisan make:test ParticipateInForum
+
+phpunit --filter ThreadTest
+
+php artisan make:test CreateThreadsTest
