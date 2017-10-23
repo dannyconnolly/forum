@@ -23,6 +23,7 @@ phpunit tests/Unit/ReplyTest.php
 php artisan make:test ThreadTest --unit
 
 phpunit --filter a_thread_has_a_creator
+phpunit --filter guests_cannot_see_the_create_threads_page
 
 php artisan make:test ParticipateInForum
 
@@ -30,3 +31,7 @@ phpunit --filter ThreadTest
 phpunit --filter CreateThreadsTest
 
 php artisan make:test CreateThreadsTest
+
+composer dump-autoload
+
+php artisan make:model Channel -m
