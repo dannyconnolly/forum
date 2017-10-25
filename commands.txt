@@ -23,7 +23,7 @@ phpunit tests/Unit/ReplyTest.php
 php artisan make:test ThreadTest --unit
 
 phpunit --filter a_thread_has_a_creator
-phpunit --filter a_user_can_filter_threads_by_any_username
+phpunit --filter a_user_can_filter_threads_by_popularity
 
 php artisan make:test ParticipateInForum
 
