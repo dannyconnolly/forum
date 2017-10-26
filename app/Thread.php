@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Thread extends Model
 {
     protected $guarded = [];
+    protected $with = ['creator', 'channel'];
 
+    /**
+     * Boot the model
+     */
     protected static function boot()
     {
         parent::boot();
@@ -17,6 +21,11 @@ class Thread extends Model
         });
     }
 
+    /**
+     * Get a string path for the thread
+     * 
+     * @ return string
+     */
     public function path()
     {
         return "/threads/{$this->channel->slug}/{$this->id}";
