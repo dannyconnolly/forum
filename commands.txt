@@ -41,3 +41,5 @@ php artisan make:controller FavoritesController
 php artisan make:migration create_favorites_table --create=favorites
 
 php artisan make:model Favorite
+
+php artisan make:controller ProfilesController
