@@ -2,11 +2,24 @@
 
 namespace App;
 
+use App\Filters\ThreadFilters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
+    use RecordsActivity;
+
+    /**
+     * Don't auto-apply mass assignment protection
+     * 
+     * @var array
+     */
     protected $guarded = [];
+
+    /**
+     * The rellationships to always eager-load
+     */
     protected $with = ['creator', 'channel'];
 
     /**
@@ -24,6 +37,7 @@ class Thread extends Model
             $thread->replies()->delete(); 
         });
     }
+
 
     /**
      * Get a string path for the thread
