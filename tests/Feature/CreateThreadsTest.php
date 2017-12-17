@@ -1,113 +1,131 @@
 <?php
 
-namespace Tests\Feature;
+namespace App\Http\Controllers;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Filters\ThreadFilters;
+use App\Thread;
+use App\Channel;
+use Illuminate\Http\Request;
 
-class CreateThreadsTest extends TestCase
+class ThreadsController extends Controller
 {
-    use DatabaseMigrations;
-
-    // public function setUp()
-    // {
-    //     parent::setUp();
-
-    //     $this->thread = factory('App\Thread')->create();
-    // }
-
-    /** @test */
-    public function guests_may_not_create_threads()
+    public function __construct()
     {
-        $this->withExceptionHandling();
+        $this->middleware('auth')->except(['index', 'show']);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Channel $channel, ThreadFilters $filters)
+    {
+        $threads = $this->getThreads($channel, $filters);
 
-        $this->get('/threads/create')
-            ->assertRedirect('/login');
+        if (request()->wantsJson()) {
+            return $threads;
+        }
 
-        $this->post('/threads')
-            ->assertRedirect('/login');
+        return view('threads.index', compact('threads'));
     }
 
-    /** @test */
-    public function an_authenticated_user_can_create_new_forum_threads()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
-        $this->signIn();
+        return view('threads.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required',
+            'channel_id' => 'required|exists:channels,id'
+        ]);
+
+        $thread = Thread::create([
+            'user_id' => auth()->id(),
+            'channel_id' => request('channel_id'),
+            'title' => request('title'),
+            'body' => request('body')
+        ]);
+
+        return redirect($thread->path());
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  integer  $channel
+     * @param  \App\Thread  $thread
+     * @return \Illuminate\Http\Response
+     */
+    public function show($channel, Thread $thread)
+    {
+        return view('threads.show', [
+            'thread' => $thread,
+            'replies' => $thread->replies()->paginate(10)
+        ]);
+    }
+
+    public function destroy($channel, Thread $thread)
+    {   
+        if ($thread->user_id != auth()->id()) {
+            abort(403, 'You do not have permission to do this');
+        }
+        $thread->delete();
+
+        if (request()->wantsJson()) {
+            return response([], 204);
+        }
+
+        return redirect('/threads');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Thread  $thread
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Thread $thread)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Thread  $thread
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Thread $thread)
+    {
+        //
+    }
+
+
+    public function getThreads(Channel $channel, ThreadFilters $filters)
+    {
+        $threads = Thread::latest()->filter($filters);
         
-        $thread = make('App\Thread');
+        if ($channel->exists) {
+            $threads->where('channel_id', $channel->id);
+        }
 
-        $response = $this->post('/threads', $thread->toArray());
+        $threads = $threads->get();
 
-        $this->get($response->headers->get('Location'))
-            ->assertSee($thread->title)
-            ->assertSee($thread->body);
-    }
-
-    /** @test */
-    public function a_thread_requires_a_title()
-    {
-        $this->publishThread(['title' => null])
-            ->assertSessionHasErrors('title');
-    }
-    
-    /** @test */
-    public function a_thread_requires_a_body()
-    {
-        $this->publishThread(['body' => null])
-            ->assertSessionHasErrors('body');
-    }
-
-    /** @test */
-    public function a_thread_requires_a_valid_channel()
-    {
-        factory('App\Channel', 2)->create();
-
-        $this->publishThread(['channel_id' => null])
-            ->assertSessionHasErrors('channel_id');
-
-        $this->publishThread(['channel_id' => 999])
-            ->assertSessionHasErrors('channel_id');
-    }
-
-    /** @test */
-    public function guests_cannot_delete_threads()
-    {
-        $this->withExceptionHandling();
-
-        $thread = create('App\Thread');
-
-        $response = $this->delete( $thread->path());
-
-        $response->assertRedirect('/login');
-    }
-
-    /** @test */
-    public function a_thread_can_be_deleted()
-    {
-        $this->signIn();
-
-        $thread = create('App\Thread');
-        $reply = create('App\Reply', ['thread_id' => $thread->id]);
-
-        $response = $this->json('DELETE', $thread->path());
-
-        $response->assertStatus(204);
-
-        $this->assertDatabaseMissing('threads', ['id' => $thread->id]);
-        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
-    }
-
-    /** @test */
-    public function threads_may_only_be_deleted_by_those_who_have_permission()
-    {
-        // TODO:
-    }
-    
-    public function publishThread($overrides = [])
-    {
-        $this->withExceptionHandling()->signIn();
-
-        $thread = make('App\Thread', $overrides);
-
-        return $this->post('/threads', $thread->toArray());
+        return $threads;
     }
 }

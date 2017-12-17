@@ -12,15 +12,15 @@
                             <a href="{{ route('profile', $thread->creator) }}">{{ $thread->creator->name }}</a> posted: 
                         </span>
 
-                        @if (Auth::check())
-                        <form action="{{ $thread->path() }}" method="POST">
-                            {{ csrf_field() }}
+                        @can ('update', $thread)
+                            <form action="{{ $thread->path() }}" method="POST">
+                                {{ csrf_field() }}
 
-                            {{ method_field('DELETE') }}
+                                {{ method_field('DELETE') }}
 
-                            <button type="submit" class="btn btn-link">Delete Thread</button>
-                        </form>
-                        @endif
+                                <button type="submit" class="btn btn-link">Delete Thread</button>
+                            </form>
+                        @endcan
                     </div><!-- /.level -->
                     {{ $thread->title }}
                 </div>
