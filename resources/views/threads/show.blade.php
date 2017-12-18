@@ -10,6 +10,7 @@
                     <div class="level">
                         <span class="flex">
                             <a href="{{ route('profile', $thread->creator) }}">{{ $thread->creator->name }}</a> posted: 
+                            {{ $thread->title }}
                         </span>
 
                         @can ('update', $thread)
@@ -22,7 +23,6 @@
                             </form>
                         @endcan
                     </div><!-- /.level -->
-                    {{ $thread->title }}
                 </div>
 
                 <div class="panel-body">
