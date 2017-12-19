@@ -37,13 +37,8 @@
             <div class="panel-footer level">
 
                 <button class="btn btn-xs mr-1" @click="editing = true">Edit</button>
+                <button class="btn btn-xs btn-danger" @click="destroy">Delete</button>
 
-                <form action="/replies/{{ $reply->id }}" method="POST">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-
-                    <button type="submit" class="btn btn-danger btn-xs">Delete</button>
-                </form>
             </div><!-- /.panel-footer -->
         @endcan
     </div><!-- /.panel -->
