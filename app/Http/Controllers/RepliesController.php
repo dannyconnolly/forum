@@ -26,14 +26,24 @@ class RepliesController extends Controller
             'body' => 'required',
         ]);
 
-        $thread->addReply([
+        $reply = $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id()
         ]);
 
+        if (request()->expectsJson()) {
+            return $reply->load('owner');
+        }
+
         return back()->with('flash', 'Your reply has been left');
     }
 
+    /**
+     * Update a reply
+     * 
+     * @param Reply $reply
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Reply $reply)
     {
         $this->authorize('update', $reply);
