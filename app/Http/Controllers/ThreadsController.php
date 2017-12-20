@@ -9,13 +9,19 @@ use Illuminate\Http\Request;
 
 class ThreadsController extends Controller
 {
+    /**
+     * ThreadsController constructor.
+     */
     public function __construct()
     {
         $this->middleware('auth')->except(['index', 'show']);
     }
+    
     /**
      * Display a listing of the resource.
      *
+     * @param  Channel      $channel
+     * @param ThreadFilters $filters
      * @return \Illuminate\Http\Response
      */
     public function index(Channel $channel, ThreadFilters $filters)
@@ -79,6 +85,13 @@ class ThreadsController extends Controller
         ]);
     }
 
+    /**
+     * Delete the given thread.
+     *
+     * @param        $channel
+     * @param Thread $thread
+     * @return mixed
+     */
     public function destroy($channel, Thread $thread)
     {   
         $this->authorize('update', $thread);
@@ -115,7 +128,13 @@ class ThreadsController extends Controller
         //
     }
 
-
+    /**
+     * Fetch all relevant threads.
+     *
+     * @param Channel       $channel
+     * @param ThreadFilters $filters
+     * @return mixed
+     */
     public function getThreads(Channel $channel, ThreadFilters $filters)
     {
         $threads = Thread::latest()->filter($filters);

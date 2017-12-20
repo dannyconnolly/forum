@@ -8,6 +8,9 @@ use App\Reply;
 
 class RepliesController extends Controller
 {
+    /**
+     * Create a new RepliesController instance.
+     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -39,10 +42,9 @@ class RepliesController extends Controller
     }
 
     /**
-     * Update a reply
-     * 
+     * Update an existing reply.
+     *
      * @param Reply $reply
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Reply $reply)
     {
@@ -52,9 +54,9 @@ class RepliesController extends Controller
     }
 
     /**
-     * Delete the given reply
-     * 
-     * @param Reply $reply
+     * Delete the given reply.
+     *
+     * @param  Reply $reply
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Reply $reply)

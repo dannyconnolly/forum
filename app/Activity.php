@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model
 {
+    /**
+     * Don't auto-apply mass assignment protection.
+     *
+     * @var array
+     */
     protected $guarded = [];
 
     /**
@@ -18,6 +23,13 @@ class Activity extends Model
         return $this->morphTo();
     }
 
+    /**
+     * Fetch an activity feed for the given user.
+     *
+     * @param  User $user
+     * @param  int  $take
+     * @return \Illuminate\Database\Eloquent\Collection;
+     */
     public static function feed($user, $take = 10)
     {
         return static::where('user_id', $user->id)
