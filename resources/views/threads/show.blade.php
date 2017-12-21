@@ -31,11 +31,7 @@
                         </div><!-- /.panel-body -->
                     </div><!-- /.panel panel-default -->
 
-                    <replies :data="{{ $thread->replies }}" 
-                            @added="repliesCount++"
-                            @removed="repliesCount--"></replies>
-                    
-                    {{--  {{ $replies->links() }}  --}}
+                    <replies @added="repliesCount++" @removed="repliesCount--"></replies>
                 </div><!-- /.col-md-8 -->
 
                 <div class="col-md-4">
