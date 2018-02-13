@@ -47,6 +47,11 @@ class User extends Authenticatable
         return $this->hasMany(Thread::class);
     }
 
+    public function lastReply()
+    {
+        return $this->hasOne(Reply::class)->latest();
+    }
+
     /**
      * Get all activity for the user.
      * 
