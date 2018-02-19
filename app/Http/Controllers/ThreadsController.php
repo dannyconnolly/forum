@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Filters\ThreadFilters;
-use Carbon\Carbon;
-use App\Thread;
 use App\Channel;
+use App\Filters\ThreadFilters;
+use App\Thread;
 use Illuminate\Http\Request;
 
 class ThreadsController extends Controller
@@ -21,7 +20,7 @@ class ThreadsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  Channel      $channel
+     * @param Channel      $channel
      * @param ThreadFilters $filters
      * @return \Illuminate\Http\Response
      */

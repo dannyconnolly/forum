@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\CreatePostRequest;
 use App\Thread;
 use App\Reply;
@@ -17,6 +16,12 @@ class RepliesController extends Controller
         $this->middleware('auth', ['except' => 'index']);
     }
 
+    /**
+     * Fetch all relevant replies
+     * 
+     * @param integer   $channelId
+     * @param Thread    $thread
+     */
     public function index($channelId, Thread $thread)
     {
         return $thread->replies()->paginate(5);
@@ -25,10 +30,10 @@ class RepliesController extends Controller
     /**
      * Persist a new reply
      * 
-     * @param integer $channelId
-     * @param Thread $thread
-     * @param CreatePostForm $form
-     * @return \Illuminate\Http\RedirectResponse
+     * @param integer           $channelId
+     * @param Thread            $thread
+     * @param CreatePostForm    $form
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function store($channelId, Thread $thread, CreatePostRequest $form)
     {
@@ -42,19 +47,15 @@ class RepliesController extends Controller
      * Update an existing reply.
      *
      * @param Reply $reply
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Reply $reply)
     {
         $this->authorize('update', $reply);
 
-        try {
-            request()->validate(['body' => 'required|spamfree']);
+        request()->validate(['body' => 'required|spamfree']);
 
-            $reply->update(request(['body']));
-        }
-        catch (\Exception $e) {
-            return response('Sorry, your reply could not be saved at this time.', 422);
-        }
+        $reply->update(request(['body']));
     }
 
     /**
