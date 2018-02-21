@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <script>
         window.App = {!! json_encode([
@@ -29,6 +29,8 @@
         [v-cloak] { display: none; }
     </style>
 
+    @yield('header')
+
 </head>
 <body>
     <div id="app">
@@ -41,5 +43,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+
+    @yield('scripts')
 </body>
 </html>
