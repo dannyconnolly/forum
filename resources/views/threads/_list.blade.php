@@ -25,6 +25,10 @@
         <div class="panel-body">                        
             <div class="body">{{ $thread->body }}</div>
         </div><!-- /.panel-body -->
+
+        <div class="panel-footer">
+            {{ $thread->visits() }} Visits
+        </div><!-- /.panel-footer -->
     </div><!-- /.panel -->
 @empty
     <p>There are no relevant results</p>
