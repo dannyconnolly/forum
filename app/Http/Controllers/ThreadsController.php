@@ -97,7 +97,7 @@ class ThreadsController extends Controller
         
         return view('threads.show', compact('thread'));
     }
-
+    
     /**
      * Delete the given thread.
      *
@@ -136,9 +136,8 @@ class ThreadsController extends Controller
      * @param  \App\Thread  $thread
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Thread $thread)
+    public function update()
     {
-        //
     }
 
     /**
