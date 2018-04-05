@@ -3,12 +3,24 @@
 namespace Tests\Feature;
 
 use App\Activity;
+use App\Rules\Recaptcha;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 class CreateThreadsTest extends TestCase
 {
     use DatabaseMigrations;
+    
+    public function setUp() 
+    {
+        parent::setUp();
+        
+        app()->singleton(Recaptcha::class, function () {
+            return \Mockery::mock(Recaptcha::class, function ($m) {
+               $m->shouldReceive('passes')->andReturn(true); 
+            });
+        });
+    }
 
     /** @test */
     function guests_may_not_create_threads()
@@ -38,16 +50,12 @@ class CreateThreadsTest extends TestCase
 
     /** @test */
     function a_user_can_create_new_forum_threads()
-    {
-        $this->signIn();
-
-        $thread = make('App\Thread');
-
-        $response = $this->post(route('threads'), $thread->toArray());
-
+    {       
+        $response = $this->publishThread(['title' => 'Some Title', 'body' => 'Some body.']);
+        
         $this->get($response->headers->get('Location'))
-            ->assertSee($thread->title)
-            ->assertSee($thread->body);
+            ->assertSee('Some Title')
+            ->assertSee('Some body.');
     }
 
     /** @test */
@@ -63,7 +71,16 @@ class CreateThreadsTest extends TestCase
         $this->publishThread(['body' => null])
             ->assertSessionHasErrors('body');
     }
-
+    
+    /** @test */
+    public function a_thread_requires_recaptcha_validation() 
+    {
+        unset(app()[Recaptcha::class]);
+        
+        $this->publishThread(['g-captcha-response' => 'test'])
+            ->assertSessionHasErrors('g-captcha-response');
+    }
+    
     /** @test */
     function a_thread_requires_a_valid_channel()
     {
@@ -85,7 +102,7 @@ class CreateThreadsTest extends TestCase
 
         $this->assertEquals($thread->fresh()->slug, 'foo-title');
 
-        $thread = $this->postJson(route('threads'), $thread->toArray())->json();
+        $thread = $this->postJson(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token'])->json();
 
         $this->assertEquals("foo-title-{$thread['id']}", $thread['slug']);
     }
@@ -97,7 +114,7 @@ class CreateThreadsTest extends TestCase
 
         $thread = create('App\Thread', ['title' => 'Foo Title 24']);
 
-        $thread = $this->postJson(route('threads'), $thread->toArray())->json();
+        $thread = $this->postJson(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token'])->json();
 
         $this->assertEquals("foo-title-24-{$thread['id']}", $thread['slug']);
     }
@@ -138,6 +155,6 @@ class CreateThreadsTest extends TestCase
 
         $thread = make('App\Thread', $overrides);
 
-        return $this->post(route('threads'), $thread->toArray());
+        return $this->post(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token']);
     }
 }
