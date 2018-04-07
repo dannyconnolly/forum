@@ -1,5 +1,6 @@
-
 window._ = require('lodash');
+
+import InstantSearch from 'vue-instantsearch';
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -53,6 +54,8 @@ if (token) {
 // });
 
 window.Vue = require('vue');
+
+Vue.use(InstantSearch);
 
 let authoizations = require('./authorizations');
 
