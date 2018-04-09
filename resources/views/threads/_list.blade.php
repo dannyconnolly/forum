@@ -23,7 +23,7 @@
         </div><!-- /.panel-heading -->
 
         <div class="panel-body">                        
-            <div class="body">{{ $thread->body }}</div>
+            <div class="body">{!! $thread->body !!}</div>
         </div><!-- /.panel-body -->
 
         <div class="panel-footer">
